@@ -7,6 +7,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
+
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class Part2 extends Part1 {
 	
 	private final Map<String, List<Integer>> pos2ints = new HashMap<>(); // gear positions -> adjacent numbers
@@ -27,20 +31,18 @@ public class Part2 extends Part1 {
 		for (final String pos : this.pos2ints.keySet()) {
 			final List<Integer> ints = this.pos2ints.get(pos);
 			if (ints.size() == 2)
-				this.ret += ints.remove(0) * ints.get(0);
+				this.res += ints.remove(0) * ints.get(0);
 		}
 	}
 	
 	@Override
 	public void aTest() {
-		assertEquals(467835, new Part2().compute("test.txt").ret);
+		assertEquals(467835, new Part2().compute("test.txt").res);
 	}
 
 	@Override
 	public void main() {
-		final int ret = new Part2().compute("input.txt").ret;
-		System.out.println(ret);
-		assertEquals(72514855, ret);
+		assertEquals(72514855, new Part2().compute("input.txt").res);
 	}
 
 }

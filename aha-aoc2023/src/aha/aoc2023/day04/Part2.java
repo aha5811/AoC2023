@@ -5,16 +5,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.Arrays;
 import java.util.List;
 
-import aha.aoc2023.Utils;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class Part2 extends Part1 {
 
 	@Override
 	Part2 compute(final String file) {
 		
-		final List<String> lines = Utils.readLines(Part1.dir + file);
+		final List<String> lines = getLines(file);
 		
-		final int[] piles = new int[lines.size()]; // piles for each card
+		final int[] piles = new int[lines.size()]; // piles for each card number
 		Arrays.fill(piles, 1);
 		
 		int i = 0;
@@ -26,21 +28,19 @@ public class Part2 extends Part1 {
 			i++;
 		}
 
-		this.ret = Arrays.stream(piles).sum();
+		this.res = Arrays.stream(piles).sum();
 
 		return this;
 	}
 	
 	@Override
 	public void aTest() {
-		assertEquals(30, new Part2().compute("test.txt").ret);
+		assertEquals(30, new Part2().compute("test.txt").res);
 	}
 	
 	@Override
 	public void main() {
-		final int ret = new Part2().compute("input.txt").ret;
-		System.out.println(ret);
-		assertEquals(8736438, ret);
+		assertEquals(8736438, new Part2().compute("input.txt").res);
 	}
 	
 }

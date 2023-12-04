@@ -5,15 +5,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.junit.FixMethodOrder;
 import org.junit.Test;
+import org.junit.runners.MethodSorters;
 
 import aha.aoc2023.Utils;
 
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class Part1 {
 
 	private static String dir = "day03/";
 
-	int ret = 0;
+	int res = 0;
 	
 	public Part1() {
 	}
@@ -25,16 +28,18 @@ public class Part1 {
 			int p = 0;
 			int xStart = -1;
 			while (true) {
-				if (p >= m.w || !Character.isDigit(m.chars[p][y])) {
+				if (p == m.w || !Character.isDigit(m.chars[p][y])) {
 					if (xStart != -1) {
 						String i = "";
 						for (int x = xStart; x < p; x++)
 							i += m.chars[x][y];
 						final int n = Integer.parseInt(i);
+
 						process(m, n, y, xStart, p - 1);
+
 						xStart = -1;
 					}
-					if (p > m.w)
+					if (p == m.w)
 						break;
 				} else if (xStart == -1)
 					xStart = p;
@@ -47,13 +52,13 @@ public class Part1 {
 		return this;
 	}
 	
-	void endProcess() {
-		// do nothing
-	}
-
 	void process(final CharMap m, final int n, final int y, final int xStart, final int xEnd) {
 		if (!m.getSymbolsAround(y, xStart, xEnd).isEmpty())
-			this.ret += n;
+			this.res += n;
+	}
+
+	void endProcess() {
+		// do nothing
 	}
 
 	class CharMap {
@@ -105,7 +110,7 @@ public class Part1 {
 		m.chars = new char[m.w][m.h];
 		int y = 0;
 		for (final String line : lines) {
-			for (int x = 0; x < line.length(); x++)
+			for (int x = 0; x < m.w; x++)
 				m.chars[x][y] = line.charAt(x);
 			y++;
 		}
@@ -114,14 +119,12 @@ public class Part1 {
 
 	@Test
 	public void aTest() {
-		assertEquals(4361, new Part1().compute("test.txt").ret);
+		assertEquals(4361, new Part1().compute("test.txt").res);
 	}
 
 	@Test
 	public void main() {
-		final int ret = new Part1().compute("input.txt").ret;
-		System.out.println(ret);
-		assertEquals(520135, ret);
+		assertEquals(520135, new Part1().compute("input.txt").res);
 	}
 	
 }
