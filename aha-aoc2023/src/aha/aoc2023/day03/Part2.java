@@ -8,9 +8,9 @@ import java.util.List;
 import java.util.Map;
 
 public class Part2 extends Part1 {
-
-	private final Map<String, List<Integer>> pos2ints = new HashMap<>();
 	
+	private final Map<String, List<Integer>> pos2ints = new HashMap<>(); // gear positions -> adjacent numbers
+
 	@Override
 	void process(final CharMap m, final int n, final int y, final int xStart, final int xEnd) {
 		for (final Symbol s : m.getSymbolsAround(y, xStart, xEnd))
@@ -21,7 +21,7 @@ public class Part2 extends Part1 {
 				this.pos2ints.get(pos).add(n);
 			}
 	}
-	
+
 	@Override
 	void endProcess() {
 		for (final String pos : this.pos2ints.keySet()) {
@@ -30,17 +30,17 @@ public class Part2 extends Part1 {
 				this.ret += ints.remove(0) * ints.get(0);
 		}
 	}
-
+	
 	@Override
-	public void test() {
+	public void aTest() {
 		assertEquals(467835, new Part2().compute("test.txt").ret);
 	}
-	
+
 	@Override
 	public void main() {
 		final int ret = new Part2().compute("input.txt").ret;
 		System.out.println(ret);
 		assertEquals(72514855, ret);
 	}
-	
+
 }

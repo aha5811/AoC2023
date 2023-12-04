@@ -39,7 +39,7 @@ public class Part1 {
 	}
 
 	@Test
-	public void test() {
+	public void aTest() {
 		assertEquals(142, new Part1().compute("test1.txt").ret);
 	}
 	

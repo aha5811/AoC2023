@@ -32,7 +32,7 @@ public class Part2 extends Part1 {
 	}
 
 	@Override
-	public void test() {
+	public void aTest() {
 		assertEquals(2286, new Part2().compute("test.txt").ret);
 	}
 	

@@ -55,12 +55,12 @@ public class Part1 {
 	
 	Game toGame(final String line) {
 		final Game g = new Game();
+		// Game 1: 3 blue, 4 red; 1 red, 2 green, 6 blue; 2 green
 		final String[] aa = line.split(":");
 		g.id = Integer.parseInt(aa[0].split(" ")[1]);
-		final String[] socs = aa[1].split(";");
 		g.sets = new LinkedList<>();
-		for (final String soc : socs) {
-			final int[] rgb = new int[] { 0, 0, 0 };
+		for (final String soc : aa[1].split(";")) {
+			final int[] rgb = new int[3];
 			for (final String cubes : soc.split(",")) {
 				final String[] nc = cubes.trim().split(" ");
 				final int n = Integer.parseInt(nc[0]);
@@ -78,7 +78,7 @@ public class Part1 {
 	}
 
 	@Test
-	public void test() {
+	public void aTest() {
 		assertEquals(8, new Part1().compute(new int[] { 12, 13, 14 }, "test.txt").ret);
 	}
 	
