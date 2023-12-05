@@ -61,7 +61,7 @@ public class Part1 {
 		// do nothing
 	}
 
-	class CharMap {
+	static class CharMap {
 		int w;
 		int h;
 		char[][] chars;
@@ -90,7 +90,7 @@ public class Part1 {
 		}
 	}
 
-	class Symbol {
+	static class Symbol {
 		char c;
 		int x;
 		int y;

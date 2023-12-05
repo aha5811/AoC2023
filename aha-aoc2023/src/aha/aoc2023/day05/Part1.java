@@ -20,23 +20,62 @@ public class Part1 {
 
 	long res = 0;
 	
-	List<Long> seednumbers = null;
-	Map<String, String> o2o = new HashMap<>();
-	Map<String, List<F>> o2fs = new HashMap<>();
+	String start = null;
+	List<Long> startNumbers = null;
+	Map<String, String> t2t = new HashMap<>(); // type -> type
+	Map<String, List<F>> t2fs = new HashMap<>(); // type -> functions
 	
-	class F {
-		long src;
-		long dst;
-		long rng;
+	static class Range {
+		long start;
+		long end;
 		
-		public F(final long dst, final long src, final long rng) {
-			this.src = src;
-			this.dst = dst;
-			this.rng = rng;
+		public Range() {
+		}
+
+		static Range sl2r(final long start, final long len) {
+			final Range r = new Range();
+			r.start = start;
+			r.end = start + len - 1;
+			return r;
+		}
+
+		static Range se2r(final long start, final long end) {
+			final Range r = new Range();
+			r.start = start;
+			r.end = end;
+			return r;
+		}
+		
+		@Override
+		public String toString() {
+			return "[" + this.start + "," + this.end + "]";
+		}
+	}
+	
+	static class F {
+		Range r;
+		long add;
+		
+		public F(final long dstN, final long srcN, final long range) {
+			this.r = Range.sl2r(srcN, range);
+			this.add = dstN - srcN;
 		}
 
 		Long f(final long l) {
-			return l >= this.src && l < this.src + this.rng ? this.dst + l - this.src : null;
+			return
+					l >= this.r.start && l <= this.r.end
+					? l + this.add
+							: null;
+		}
+
+		void f(final Range r) {
+			r.start += this.add;
+			r.end += this.add;
+		}
+
+		@Override
+		public String toString() {
+			return "F:" + this.r + (this.add > 0 ? "+" : "") + this.add;
 		}
 	}
 
@@ -50,22 +89,31 @@ public class Part1 {
 	}
 
 	void doCompute() {
-		this.res = this.seednumbers.stream().mapToLong(x -> end("seed", x)).min().orElse(0);
+		this.res =
+				this.startNumbers.stream()
+				.mapToLong(x -> end(this.start, x))
+				.min()
+				.orElse(0) // won't happen
+				;
 	}
 
-	void parseStructure(final String file) {
+	private void parseStructure(final String file) {
 		final List<String> lines = Utils.readLines(dir + file);
 
-		this.seednumbers = Utils.toLs(lines.remove(0).split(":")[1]);
+		{
+			final String[] s = lines.remove(0).split(":");
+			this.start = s[0];
+			this.start = this.start.substring(0, this.start.length() - 1);
+			this.startNumbers = Utils.toLs(s[1]);
+		}
 		
 		List<F> fs = null;
 		for (final String line : lines)
 			if (line.endsWith("map:")) {
-				final String[] s2s = line.split("\s+")[0].split("\\-");
-				final String s1 = s2s[0], s2 = s2s[2];
-				this.o2o.put(s1, s2);
-				fs = new LinkedList<>();
-				this.o2fs.put(s1, fs);
+				final String[] ss = line.split("\s+")[0].split("\\-");
+				final String t1 = ss[0], t2 = ss[2];
+				this.t2t.put(t1, t2);
+				this.t2fs.put(t1, fs = new LinkedList<>());
 			} else if (line.isEmpty())
 				fs = null;
 			else {
@@ -74,16 +122,16 @@ public class Part1 {
 			}
 	}
 
-	long end(final String o, final Long l) {
-		final String target = this.o2o.get(o);
-		if (target == null)
+	long end(final String type, final Long l) {
+		final String nextType = this.t2t.get(type);
+		if (nextType == null)
 			return l;
-		for (final F f : this.o2fs.get(o)) {
+		for (final F f : this.t2fs.get(type)) {
 			final Long ret = f.f(l);
 			if (ret != null)
-				return end(target, ret);
+				return end(nextType, ret);
 		}
-		return end(target, l);
+		return end(nextType, l);
 	}
 	
 	@Test

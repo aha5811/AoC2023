@@ -1,42 +1,149 @@
 package aha.aoc2023.day05;
 
-import static org.junit.Assert.fail;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 
-import org.junit.FixMethodOrder;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.Test;
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class Part2 extends Part1 {
+	
+	private boolean naive = false;
+	
+	public Part2() {
+	}
+
+	Part2 setNaive() {
+		this.naive = true;
+		return this;
+	}
 	
 	@Override
 	void doCompute() {
-		
-		// naive
-		final List<Long> ls = new LinkedList<>(this.seednumbers);
+		if (this.naive)
+			doComputeNaive();
+		else
+			doComputeFast();
+	}
+	
+	private void doComputeNaive() {
 		long min = Long.MAX_VALUE;
+		
+		final List<Long> ls = new LinkedList<>(this.startNumbers);
 		while (!ls.isEmpty()) {
-			final long start = ls.remove(0), range = ls.remove(0);
-			for (long l = start; l < start + range; l++)
-				min = Math.min(min, end("seed", l));
+			final long number = ls.remove(0), range = ls.remove(0);
+			for (long l = number; l < number + range; l++)
+				min = Math.min(min, end(this.start, l));
+		}
+
+		this.res = min;
+	}
+	
+	private void doComputeFast() {
+
+		final List<Range> ranges = new LinkedList<>();
+		{
+			final List<Long> ls = new LinkedList<>(this.startNumbers);
+			while (!ls.isEmpty())
+				ranges.add(Range.sl2r(ls.remove(0), ls.remove(0)));
 		}
 		
-		this.res = min;
+		String type = this.start;
 		
+		while (true) {
+			final String nextType = this.t2t.get(type);
+			if (nextType == null)
+				break;
+			
+			step(this.t2fs.get(type), ranges);
+			
+			type = nextType;
+		}
+		
+		this.res = ranges.stream().mapToLong(r -> r.start).min().orElse(0l);
+		
+	}
+	
+	private void step(final List<F> fs, final List<Range> ranges) {
+
+		final List<Range> work = new LinkedList<>(ranges);
+		ranges.clear();
+
+		for (final F f : fs) {
+			final ListIterator<Range> ri = work.listIterator();
+			while (ri.hasNext()) {
+				final Range r = ri.next();
+				if (!isDisjunct(r, f.r)) {
+					ri.remove();
+					if (r.start < f.r.start) { // left non-overlap
+						ri.add(Range.se2r(r.start, f.r.start - 1));
+						r.start = f.r.start;
+					}
+					if (r.end > f.r.end) { // right non-overlap
+						ri.add(Range.se2r(f.r.end + 1, r.end));
+						r.end = f.r.end;
+					}
+					f.f(r);
+					ranges.add(r);
+				}
+			}
+		}
+
+		ranges.addAll(work);
+		
+		merge(ranges);
+		
+	}
+	
+	private boolean isDisjunct(final Range r1, final Range r2) {
+		return r1.start > r2.end || r1.end < r2.start;
+	}
+	
+	private void merge(final List<Range> ranges) {
+		
+		final List<Range> work = new LinkedList<>(ranges);
+		ranges.clear();
+
+		while (!work.isEmpty()) {
+			final Range r1 = work.remove(0);
+			boolean merged = false;
+			final ListIterator<Range> ri = work.listIterator();
+			while (ri.hasNext()) {
+				final Range r2 = ri.next();
+				if (!isDisjunct(r1, r2)
+						|| r1.end + 1 == r2.start
+						|| r2.end + 1 == r1.start) // overlaps or touches
+				{
+					ri.remove(); // remove r2
+					r1.start = Math.min(r1.start, r2.start);
+					r1.end = Math.max(r1.end, r2.end);
+					ri.add(r1); // re-add changed r1
+					merged = true;
+					break;
+				}
+			}
+			if (!merged)
+				ranges.add(r1);
+		}
+
+	}
+	
+	@Test
+	public void aTestNaive() {
+		assertEquals(46, new Part2().setNaive().compute("test.txt").res);
 	}
 
 	@Override
 	public void aTest() {
 		assertEquals(46, new Part2().compute("test.txt").res);
 	}
-
+	
 	@Override
 	public void main() {
-		// assertEquals(0, new Part2().compute("input.txt").res);
-		fail("won't run in reasonable time");
+		// assertEquals(0, new Part2().setNaive().compute("input.txt").res);
+		assertEquals(60294664, new Part2().compute("input.txt").res);
 	}
-
+	
 }
