@@ -2,9 +2,7 @@ package aha.aoc2023.day04;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -38,14 +36,10 @@ public class Part1 {
 	int matchCount(final String line) {
 		// Card 1: 41 48 83 86 17 | 83 86 6 31 17 9 48 53
 		final String[] parts = line.split(":")[1].split("\\|");
-		final List<Integer> wins = toIs(parts[0]);
-		return (int) toIs(parts[1]).stream().filter(wins::contains).count();
+		final List<Integer> wins = Utils.toIs(parts[0]);
+		return (int) Utils.toIs(parts[1]).stream().filter(wins::contains).count();
 	}
-	
-	private List<Integer> toIs(final String s) {
-		return Arrays.stream(s.trim().split("\\s+")).map(Integer::parseInt).collect(Collectors.toList());
-	}
-	
+		
 	@Test
 	public void aTest() {
 		assertEquals(13, new Part1().compute("test.txt").res);
