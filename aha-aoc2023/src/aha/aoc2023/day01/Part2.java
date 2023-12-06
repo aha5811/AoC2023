@@ -4,10 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Map;
 
-import org.junit.FixMethodOrder;
-import org.junit.runners.MethodSorters;
-
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class Part2 extends Part1 {
 
 	private static Map<String, Character> w2c = Map.of(

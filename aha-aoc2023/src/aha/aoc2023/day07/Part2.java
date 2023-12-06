@@ -1,4 +1,4 @@
-package aha.aoc2023.day00;
+package aha.aoc2023.day07;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

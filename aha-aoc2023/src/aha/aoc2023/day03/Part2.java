@@ -7,10 +7,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.FixMethodOrder;
-import org.junit.runners.MethodSorters;
-
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class Part2 extends Part1 {
 	
 	private final Map<String, List<Integer>> pos2ints = new HashMap<>(); // gear positions -> adjacent numbers
