@@ -6,8 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 
-import org.junit.jupiter.api.Test;
-
 public class Part2 extends Part1 {
 	
 	private boolean naive = false;
@@ -15,7 +13,7 @@ public class Part2 extends Part1 {
 	public Part2() {
 	}
 
-	Part2 setNaive() {
+	Part2 withNaive() {
 		this.naive = true;
 		return this;
 	}
@@ -77,28 +75,25 @@ public class Part2 extends Part1 {
 				final Range r = ri.next();
 				if (!isDisjunct(r, f.r)) {
 					ri.remove();
-					if (r.start < f.r.start) { // left non-overlap
+					if (r.start < f.r.start) { // add left non-overlap and cut
 						ri.add(Range.se2r(r.start, f.r.start - 1));
 						r.start = f.r.start;
 					}
-					if (r.end > f.r.end) { // right non-overlap
+					if (r.end > f.r.end) { // add right non-overlap and cut
 						ri.add(Range.se2r(f.r.end + 1, r.end));
 						r.end = f.r.end;
 					}
+					// add affected part
 					f.f(r);
 					ranges.add(r);
 				}
 			}
 		}
 
-		ranges.addAll(work);
+		ranges.addAll(work); // no f matched -> identity
 		
 		merge(ranges);
 		
-	}
-	
-	private boolean isDisjunct(final Range r1, final Range r2) {
-		return r1.start > r2.end || r1.end < r2.start;
 	}
 	
 	private void merge(final List<Range> ranges) {
@@ -130,19 +125,18 @@ public class Part2 extends Part1 {
 
 	}
 	
-	@Test
-	public void aTestNaive() {
-		assertEquals(46, new Part2().setNaive().compute("test.txt").res);
+	private boolean isDisjunct(final Range r1, final Range r2) {
+		return r1.start > r2.end || r1.end < r2.start;
 	}
-
+	
 	@Override
 	public void aTest() {
+		assertEquals(46, new Part2().withNaive().compute("test.txt").res);
 		assertEquals(46, new Part2().compute("test.txt").res);
 	}
 	
 	@Override
 	public void main() {
-		// assertEquals(0, new Part2().setNaive().compute("input.txt").res);
 		assertEquals(60294664, new Part2().compute("input.txt").res);
 	}
 	
