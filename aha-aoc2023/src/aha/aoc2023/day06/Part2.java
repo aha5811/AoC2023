@@ -36,20 +36,28 @@ public class Part2 extends Part1 {
 			return computeFast(r);
 	}
 	
-	private int computeFast(final Race r) {
-		// TODO
-		return 0;
+	private long computeFast(final Race r) {
+		// holdTime = x
+		// 1 * x * (t - x) > d <=> -x² + tx > d <=> -x² + tx - d > 0
+		// x1/2 = (-b +/- Math.sqrt(b² - 4ac)) / 2a
+		//      = (t +/- Math.sqrt(t² - 4d)) / 2
+		//      = t/2 +/- Math.sqrt(t² - 4d)/2
+		final double p1 = r.t / 2,
+				p2 = Math.sqrt(Math.pow(r.t, 2) - 4 * r.d) / 2,
+				x0_1 = p1 + p2,
+				x0_2 = p1 - p2;
+		return Math.abs((long) (x0_1 - x0_2));
 	}
 
 	@Override
 	public void aTest() {
 		assertEquals(71503, new Part2().withNaive().compute("test.txt").res);
-		assertEquals(71503, new Part2().compute("test.txt").res);
+		assertEquals(71503, new Part2().compute("test.txt").res, "non naive method");
 	}
 
 	@Override
 	public void main() {
-		assertEquals(0, new Part2().compute("input.txt").res);
+		assertEquals(32607562, new Part2().compute("input.txt").res);
 	}
 
 }
