@@ -58,7 +58,7 @@ public class Part1 {
 	}
 
 	void endProcess() {
-		// do nothing
+		// do nothing - needed as extension point for Part2
 	}
 
 	static class CharMap {

@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -36,15 +37,15 @@ public class Part1 {
 		hbs.sort(new Comparator<HB>() {
 			@Override
 			public int compare(final HB hb1, final HB hb2) {
-				if (hb1.rank == hb2.rank) {
-					for (int i = 0; i < hb1.hand.size(); i++) {
-						final int ret = Integer.compare(hb1.hand.get(i), hb2.hand.get(i));
-						if (ret != 0)
-							return ret;
-					}
-					return 0;
-				}
-				return Integer.compare(hb1.rank, hb2.rank);
+				if (hb1.rank == hb2.rank)
+					return
+							IntStream.range(0, hb1.hand.size())
+							.map(i -> Integer.compare(hb1.hand.get(i), hb2.hand.get(i)))
+							.filter(r -> r != 0)
+							.findFirst()
+							.orElse(0);
+				else
+					return Integer.compare(hb1.rank, hb2.rank);
 			}
 		});
 
@@ -90,7 +91,8 @@ public class Part1 {
 	private static List<Integer> toIA(final String s, final Map<Character, Integer> ch2val) {
 		return s.chars().mapToObj(c -> (char) c)
 				.map(c -> Character.isDigit(c) ? Character.getNumericValue(c) : ch2val.get(c))
-				.collect(Collectors.toCollection(ArrayList::new)); // ArrayList for fast get
+				.collect(Collectors.toCollection(ArrayList::new));
+		// ArrayList for faster get when comparing cards for same ranks
 	}
 
 	int rank(final HB hb) {

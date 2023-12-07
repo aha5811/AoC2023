@@ -21,7 +21,7 @@ public class Part1 {
 	}
 	
 	Part1 compute(final String file) {
-		this.res = getLines(file).stream()
+		this.res = getCards(file).stream()
 				.map(line -> matchCount(line))
 				.mapToInt(m -> m == 0 ? 0 : (int) Math.pow(2, m - 1))
 				.sum();
@@ -29,13 +29,13 @@ public class Part1 {
 		return this;
 	}
 
-	List<String> getLines(final String file) {
+	List<String> getCards(final String file) {
 		return Utils.readLines(dir + file);
 	}
 
-	int matchCount(final String line) {
+	int matchCount(final String card) {
 		// Card 1: 41 48 83 86 17 | 83 86 6 31 17 9 48 53
-		final String[] parts = line.split(":")[1].split("\\|");
+		final String[] parts = card.split(":")[1].split("\\|");
 		final List<Integer> wins = Utils.toIs(parts[0]);
 		return (int) Utils.toIs(parts[1]).stream().filter(wins::contains).count();
 	}
