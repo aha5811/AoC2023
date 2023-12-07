@@ -11,7 +11,7 @@ public class Part1 {
 
 	static String dir = "day08/";
 
-	long res = 0;
+	long res;
 	
 	public Part1() {
 	}
