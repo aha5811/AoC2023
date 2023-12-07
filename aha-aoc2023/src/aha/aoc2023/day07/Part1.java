@@ -41,7 +41,7 @@ public class Part1 {
 					return
 							IntStream.range(0, hb1.hand.size())
 							.map(i -> Integer.compare(hb1.hand.get(i), hb2.hand.get(i)))
-							.filter(r -> r != 0)
+							.filter(i -> i != 0)
 							.findFirst()
 							.orElse(0);
 				else
