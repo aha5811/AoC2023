@@ -8,42 +8,59 @@ import aha.aoc2023.Utils.Symbol;
 
 public class Part2 extends Part1 {
 	
+	private boolean pp = false;
+	
+	private Part2 withPrint() {
+		this.pp = true;
+		return this;
+	}
+	
 	@Override
 	long getRes(List<Symbol> path) {
 		
 		int cnt = 0;
 
 		for (int y = 0; y < m.h; y++) {
-			int pSkipped = 0;
-			String ps = "";
+			int pathCrossed = 0;
+			String pathChars = "";
 			for (int x = 0; x < m.w; x++)
-				if (!onPath(x, y, path)) {
-					if (!ps.isEmpty()) {
-						pSkipped +=
-							ps
-							.replace("-", "")
-							.replace("LJ", "")
-							.replace("F7", "")
-							.replace("L7", "|")
-							.replace("FJ", "|")
-							.length();
-						ps = "";
+				if (onPath(x, y, path))
+					pathChars += m.getSymbol(x, y);
+				else {
+					if (!pathChars.isEmpty()) {
+						pathCrossed +=
+							pathChars
+							.replace("─", "")
+							.replace("┌┐", "")
+							.replace("└┘", "")
+							.replace("┌┘", "│")
+							.replace("└┐", "│")
+							.length(); // all │
+						pathChars = "";
 					}
-					if (pSkipped % 2 == 1) {
+					if (pathCrossed % 2 == 1) {
+						if (pp)
+							m.chars[x][y] = enclosed; // just for output
 						cnt++;
-						// m.chars[x][y] = enclosed; // just for output
 					}
-				} else
-					ps += m.getSymbol(x, y);
+				}
 		}
 
-		// printPath(path, enclosed);
+		if (pp)
+			printPath(path, enclosed);
 
 		return cnt;
 		
 	}
-	
-	private static char enclosed = '#';
+
+	private boolean onPath(int x, int y, List<Symbol> path) {
+		for (Symbol s : path)
+			if (s.x == x && s.y == y)
+				return true;
+		return false;
+	}
+
+	private static char enclosed = '◉';
 	
 	private void printPath(List<Symbol> path, char keep) {
 		for (int y = 0; y < m.h; y++) {
@@ -54,13 +71,6 @@ public class Part2 extends Part1 {
 			}
 			System.out.println(line);
 		}
-	}
-	
-	private boolean onPath(int x, int y, List<Symbol> path) {
-		for (Symbol s : path)
-			if (s.x == x && s.y == y)
-				return true;
-		return false;
 	}
 
 	@Override
@@ -75,7 +85,7 @@ public class Part2 extends Part1 {
 
 	@Override
 	public void main() {
-		assertEquals(495, new Part2().compute("input.txt").res);
+		assertEquals(495, new Part2().withPrint().compute("input.txt").res);
 	}
 
 }

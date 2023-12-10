@@ -27,11 +27,21 @@ public class Part1 {
 	final Part1 compute(final String file) {
 		m = new D10Map(dir + file);
 		
+		replace();
+		
 		Symbol s = getStart();
 
 		List<Symbol> possible = getPossibleNeighbours(s);
 
 		// we know that possible.size() == 2
+		// otherwise we start with one possible neighbour
+		//  -> it it returns to start, remember the loop
+		//     and remove starting neighbour and the neighbour from which it returned to start
+		//  -> otherwise remove the starting neighbour (no loop)
+		// 
+		//  -> if remaining list has still 2 neighbours check if these two form a loop
+		// 
+		// if 2 loops take the longer one
 
 		m.chars[s.x][s.y] = findConnectingChar(s, possible.remove(0), possible.get(0));
 
@@ -40,6 +50,19 @@ public class Part1 {
 		res = getRes(path);
 				
 		return this;
+	}
+	
+	private void replace() {
+		for (int x = 0; x < m.w; x++)
+			for (int y = 0; y < m.h; y++) {
+				char c = m.getSymbol(x, y);
+				int p = "|FJL7-".indexOf(c);
+				if (p != -1)
+					c = "│┌┘└┐─".toCharArray()[p];
+				else if (c != 'S')
+					c = ' ';
+				m.chars[x][y] = c;
+			}
 	}
 
 	private Symbol getStart() {
@@ -51,45 +74,48 @@ public class Part1 {
 			}
 		return null;
 	}
-	
+
 	private List<Symbol> getPossibleNeighbours(Symbol s) {
 		List<Symbol> possible = new LinkedList<>();
+
+		// going to left has a symbol with a east end
 		{
 			Symbol x = m.getS(s.x - 1, s.y);
-			if (x != null && "-FL".indexOf(x.c) != -1)
+			if (x != null && "─┌└".indexOf(x.c) != -1)
 				possible.add(x);
 		}
+		// going to right has a symbol with west end
 		{
 			Symbol x = m.getS(s.x + 1, s.y);
-			if (x != null && "-J7".indexOf(x.c) != -1)
+			if (x != null && "┘┐─".indexOf(x.c) != -1)
 				possible.add(x);
 		}
+		// going up has symbol with south end
 		{
 			Symbol x = m.getS(s.x, s.y - 1);
-			if (x != null && "|F7".indexOf(x.c) != -1)
+			if (x != null && "┐│┌".indexOf(x.c) != -1)
 				possible.add(x);
 		}
+		// going down has symbol with north end
 		{
 			Symbol x = m.getS(s.x, s.y + 1);
-			if (x != null && "|JL".indexOf(x.c) != -1)
+			if (x != null && "┘│└".indexOf(x.c) != -1)
 				possible.add(x);
 		}
+		
 		return possible;
 	}
 
 	private char findConnectingChar(Symbol s, Symbol from, Symbol to) {
-		char sc = '.';
 
-		for (char c : "-JFL7|".toCharArray()) {
+		for (char c : "┘─┌└│┐".toCharArray()) {
 			Symbol ss = new Symbol(c, s.x, s.y);
 			Symbol next = m.next(ss, from);
-			if (next != null && next.x == to.x && next.y == to.y) {
-				sc = c;
-				break;
-			}
+			if (next != null && next.x == to.x && next.y == to.y)
+				return c;
 		}
 
-		return sc;
+		return ' '; // won't happen
 	}
 
 	private List<Symbol> computePath(Symbol start, Symbol initNext) {
@@ -120,44 +146,38 @@ public class Part1 {
 			super(file);
 		}
 		
-		/*
-		| = north <-> south.
-		- = east <-> west.
-		L = north <-> east
-		J = north <-> west
-		7 = south <-> west
-		F = south <-> east
-		*/
 		Symbol next(Symbol at, Symbol from) {
-			int dx = at.x - from.x, dy = at.y - from.y;
+			int x = at.x, y = at.y,
+				dx = x - from.x, dy = y - from.y;
+			char c = at.c;
 			// either dx or dy == 0, the other one is -1 or +1
-			if (at.c == '|')
-				return dx != 0 ? null : getS(at.x, at.y + dy);
-			else if (at.c == '-')
-				return dy != 0 ? null : getS(at.x + dx, at.y);
-			else if (at.c == 'L')
+			if (c == '│')
+				return dx != 0 ? null : getS(x, y + dy);
+			else if (c == '─')
+				return dy != 0 ? null : getS(x + dx, y);
+			else if (c == '└')
 				return	dy == 1
-						? getS(at.x + 1, at.y)
+						? getS(x + 1, y)
 						: dx == -1
-							? getS(at.x, at.y - 1)
+							? getS(x, y - 1)
 							: null;
-			else if (at.c == 'J')
+			else if (c == '┘')
 				return	dy == 1
-						? getS(at.x - 1, at.y)
+						? getS(x - 1, y)
 						: dx == 1
-							? getS(at.x, at.y - 1)
+							? getS(x, y - 1)
 							: null;
-			else if (at.c == '7')
+			else if (c == '┐')
 				return 	dy == -1
-						? getS(at.x - 1, at.y)
+						? getS(x - 1, y)
 						: dx == 1
-							? getS(at.x, at.y + 1)
+							? getS(x, y + 1)
 							: null;
-			else if (at.c == 'F')
+			else if (c == '┌')
 				return	dy == -1
-						? getS(at.x + 1, at.y)
+						? getS(x + 1, y)
 						: dx == -1
-							? getS(at.x, at.y + 1)
+							? getS(x, y + 1)
 							: null;
 			else
 				return null;
@@ -167,6 +187,19 @@ public class Part1 {
 			Character c = getSymbol(x, y);
 			return c == null ? null : new Symbol(c, x, y);
 		}
+		
+		@Override
+		public String toString() {
+			String ret = "";
+			for (int y = 0; y < h; y++) {
+				String line = "";
+				for (int x = 0; x < w; x++)
+					line += getSymbol(x, y);
+				ret += line + "\n";
+			}
+			return ret;
+		}
+
 	}
 	
 	
