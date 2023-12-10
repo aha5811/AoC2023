@@ -17,17 +17,42 @@ public class Part1 {
 
 	static String dir = "day10/";
 
+	D10Map m;
+	
 	long res = 0;
 	
 	public Part1() {
 	}
 
-	Part1 compute(final String file) {
-		D10Map m = new D10Map(dir + file);
+	final Part1 compute(final String file) {
+		m = new D10Map(dir + file);
 		
-		// find start
-		Symbol s = getStart(m);
+		Symbol s = getStart();
 
+		List<Symbol> possible = getPossibleNeighbours(s);
+
+		// we know that possible.size() == 2
+
+		m.chars[s.x][s.y] = findConnectingChar(s, possible.remove(0), possible.get(0));
+
+		List<Symbol> path = computePath(s, possible.get(0));
+
+		res = getRes(path);
+				
+		return this;
+	}
+
+	private Symbol getStart() {
+		for (int x = 0; x < m.w; x++)
+			for (int y = 0; y < m.h; y++) {
+				Symbol ret = m.getS(x, y);
+				if (ret.c == 'S')
+					return ret;
+			}
+		return null;
+	}
+	
+	private List<Symbol> getPossibleNeighbours(Symbol s) {
 		List<Symbol> possible = new LinkedList<>();
 		{
 			Symbol x = m.getS(s.x - 1, s.y);
@@ -49,70 +74,46 @@ public class Part1 {
 			if (x != null && "|JL".indexOf(x.c) != -1)
 				possible.add(x);
 		}
+		return possible;
+	}
 
-		if (possible.size() == 2) {
-			
-			int dx1 = s.x - possible.get(0).x,
-				dx2 = s.x - possible.get(1).x,
-				dy1 = s.y - possible.get(0).y,
-				dy2 = s.y - possible.get(1).y;
-			
-			List<Character> pcs = new LinkedList<>();
-			for (char c : "-JFL7|".toCharArray())
-				pcs.add(c);
-			
-			if (dx1 != 0 || dx2 != 0)
-				pcs.removeIf(c -> c == '|');
-			if (dy1 != 0 || dy2 != 0)
-				pcs.removeIf(c -> c == '-');
-			
-			if (dx1 == 1 || dx2 == 1) { // from left
-				pcs.removeIf(c -> c == 'F');
-				pcs.removeIf(c -> c == 'L');
-			} else if (dx1 == -1 || dx2 == -1) { // from right
-				pcs.removeIf(c -> c == 'J');
-				pcs.removeIf(c -> c == '7');
+	private char findConnectingChar(Symbol s, Symbol from, Symbol to) {
+		char sc = '.';
+
+		for (char c : "-JFL7|".toCharArray()) {
+			Symbol ss = new Symbol(c, s.x, s.y);
+			Symbol next = m.next(ss, from);
+			if (next != null && next.x == to.x && next.y == to.y) {
+				sc = c;
+				break;
 			}
-			if (dy1 == 1 || dy2 == 1) { // from top
-				pcs.removeIf(c -> c == '7');
-				pcs.removeIf(c -> c == 'F');
-			} else if (dy1 == -1 || dy2 == -1) { // from bottom
-				pcs.removeIf(c -> c == 'L');
-				pcs.removeIf(c -> c == 'J');
-			}
-			
-			m.chars[s.x][s.y] = pcs.get(0);
-			
-			int step = 1;
-			Symbol next = possible.get(0);
-			Symbol from = s;
-			while (true) {
-				step++;
-				Symbol n = m.next(next.x, next.y, from);
-				if (n.x == s.x && n.y == s.y)
-					break;
-				from = next;
-				next = n;
-			}
-			
-			res = step / 2;
-			
-		} else
-			; // not needed
-				
-		return this;
+		}
+
+		return sc;
 	}
-	
-	private Symbol getStart(D10Map m) {
-		for (int x = 0; x < m.w; x++)
-			for (int y = 0; y < m.h; y++) {
-				Symbol ret = m.getS(x, y);
-				if (ret.c == 'S')
-					return ret;
-			}
-		return null;
+
+	private List<Symbol> computePath(Symbol start, Symbol initNext) {
+		List<Symbol> path = new LinkedList<>();
+
+		Symbol from = start;
+		Symbol next = initNext;
+		path.add(start);
+		path.add(next);
+		while (true) {
+			Symbol n = m.next(next, from);
+			if (n.x == start.x && n.y == start.y) // back to start
+				break;
+			path.add(n);
+			from = next;
+			next = n;
+		}
+		return path;
 	}
-	
+
+	long getRes(List<Symbol> path) {
+		return path.size() / 2;
+	}
+
 	static class D10Map extends CharMap {
 
 		public D10Map(String file) {
@@ -120,45 +121,43 @@ public class Part1 {
 		}
 		
 		/*
-		| is a vertical pipe connecting north and south.
-		- is a horizontal pipe connecting east and west.
-		L is a 90-degree bend connecting north and east.
-		J is a 90-degree bend connecting north and west.
-		7 is a 90-degree bend connecting south and west.
-		F is a 90-degree bend connecting south and east.
-		. is ground; there is no pipe in this tile.
+		| = north <-> south.
+		- = east <-> west.
+		L = north <-> east
+		J = north <-> west
+		7 = south <-> west
+		F = south <-> east
 		*/
-		Symbol next(int x, int y, Symbol from) {
-			int dx = x - from.x, dy = y - from.y;
+		Symbol next(Symbol at, Symbol from) {
+			int dx = at.x - from.x, dy = at.y - from.y;
 			// either dx or dy == 0, the other one is -1 or +1
-			char c = getSymbol(x, y); // can't be null
-			if (c == '|')
-				return dx != 0 ? null : getS(x, y + dy);
-			else if (c == '-')
-				return dy != 0 ? null : getS(x + dx, y);
-			else if (c == 'L')
+			if (at.c == '|')
+				return dx != 0 ? null : getS(at.x, at.y + dy);
+			else if (at.c == '-')
+				return dy != 0 ? null : getS(at.x + dx, at.y);
+			else if (at.c == 'L')
 				return	dy == 1
-						? getS(x + 1, y)
+						? getS(at.x + 1, at.y)
 						: dx == -1
-							? getS(x, y - 1)
+							? getS(at.x, at.y - 1)
 							: null;
-			else if (c == 'J')
+			else if (at.c == 'J')
 				return	dy == 1
-						? getS(x - 1, y)
+						? getS(at.x - 1, at.y)
 						: dx == 1
-							? getS(x, y - 1)
+							? getS(at.x, at.y - 1)
 							: null;
-			else if (c == '7')
+			else if (at.c == '7')
 				return 	dy == -1
-						? getS(x - 1, y)
+						? getS(at.x - 1, at.y)
 						: dx == 1
-							? getS(x, y + 1)
+							? getS(at.x, at.y + 1)
 							: null;
-			else if (c == 'F')
+			else if (at.c == 'F')
 				return	dy == -1
-						? getS(x + 1, y)
+						? getS(at.x + 1, at.y)
 						: dx == -1
-							? getS(x, y + 1)
+							? getS(at.x, at.y + 1)
 							: null;
 			else
 				return null;
