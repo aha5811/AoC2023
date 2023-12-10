@@ -12,7 +12,7 @@ public class Part2 extends Part1 {
 	private final Map<String, List<Integer>> pos2ints = new HashMap<>(); // gear positions -> adjacent numbers
 
 	@Override
-	void process(final CharMap m, final int n, final int y, final int xStart, final int xEnd) {
+	void process(final Day3Map m, final int n, final int y, final int xStart, final int xEnd) {
 		for (final Symbol s : m.getSymbolsAround(y, xStart, xEnd))
 			if (s.c == '*') {
 				final String pos = s.x + "x" + s.y;

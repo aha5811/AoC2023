@@ -5,7 +5,9 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -54,6 +56,43 @@ public class Utils {
 	 */
 	public static long gcd(final long a, final long b) {
 		return b == 0 ? a : gcd(b, a % b);
+	}
+	
+	public static class CharMap {
+		public final int w;
+		public final int h;
+		public final char[][] chars;
+		
+		public CharMap(final String file) {
+			final List<String> lines = Utils.readLines(file);
+			this.h = lines.size();
+			this.w = lines.get(0).length();
+			this.chars = new char[w][h];
+			int y = 0;
+			for (final String line : lines) {
+				for (int x = 0; x < w; x++)
+					chars[x][y] = line.charAt(x);
+				y++;
+			}
+		}
+				
+		public Character getSymbol(final int x, final int y) {
+			if (x < 0 || y < 0 || x >= this.w || y >= this.h)
+				return null;
+			return this.chars[x][y];
+		}
+	}
+
+	public static class Symbol {
+		public final char c;
+		public final int x;
+		public final int y;
+
+		public Symbol(final char c, final int x, final int y) {
+			this.c = c;
+			this.x = x;
+			this.y = y;
+		}
 	}
 	
 }

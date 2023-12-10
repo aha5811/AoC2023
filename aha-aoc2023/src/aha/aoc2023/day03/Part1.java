@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
 import aha.aoc2023.Utils;
+import aha.aoc2023.Utils.CharMap;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class Part1 {
@@ -22,7 +23,7 @@ public class Part1 {
 	}
 
 	Part1 compute(final String file) {
-		final CharMap m = toCM(file);
+		final Day3Map m = new Day3Map(dir + file);
 		
 		for (int y = 0; y < m.h; y++) {
 			int p = 0;
@@ -52,7 +53,7 @@ public class Part1 {
 		return this;
 	}
 	
-	void process(final CharMap m, final int n, final int y, final int xStart, final int xEnd) {
+	void process(final Day3Map m, final int n, final int y, final int xStart, final int xEnd) {
 		if (!m.getSymbolsAround(y, xStart, xEnd).isEmpty())
 			this.res += n;
 	}
@@ -61,18 +62,12 @@ public class Part1 {
 		// do nothing - needed as extension point for Part2
 	}
 
-	static class CharMap {
-		int w;
-		int h;
-		char[][] chars;
-		
-		Character getSymbol(final int x, final int y) {
-			if (x < 0 || y < 0 || x >= this.w || y >= this.h)
-				return null;
-			final char c = this.chars[x][y];
-			return Character.isDigit(c) || c == '.' ? null : c;
-		}
+	static class Day3Map extends CharMap {
 
+		public Day3Map(String file) {
+			super(file);
+		}
+		
 		void addIf(final List<Symbol> syms, final int x, final int y) {
 			final Character c = getSymbol(x, y);
 			if (c != null)
@@ -88,6 +83,13 @@ public class Part1 {
 			addIf(ret, xEnd + 1, y);
 			return ret;
 		}
+		
+		public Character getSymbol(final int x, final int y) {
+			Character c = super.getSymbol(x, y);
+			return c == null ? null : Character.isDigit(c) || c == '.' ? null : c;
+		}
+
+		
 	}
 
 	static class Symbol {
@@ -102,21 +104,6 @@ public class Part1 {
 		}
 	}
 	
-	CharMap toCM(final String file) {
-		final List<String> lines = Utils.readLines(dir + file);
-		final CharMap m = new CharMap();
-		m.h = lines.size();
-		m.w = lines.get(0).length();
-		m.chars = new char[m.w][m.h];
-		int y = 0;
-		for (final String line : lines) {
-			for (int x = 0; x < m.w; x++)
-				m.chars[x][y] = line.charAt(x);
-			y++;
-		}
-		return m;
-	}
-
 	@Test
 	public void aTest() {
 		assertEquals(4361, new Part1().compute("test.txt").res);
