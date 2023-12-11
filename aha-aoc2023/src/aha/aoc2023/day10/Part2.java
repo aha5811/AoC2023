@@ -3,6 +3,7 @@ package aha.aoc2023.day10;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
+import java.util.Map;
 
 import aha.aoc2023.Utils.Symbol;
 
@@ -16,45 +17,45 @@ public class Part2 extends Part1 {
 	}
 	
 	@Override
-	long getRes(List<Symbol> path) {
+	long getRes(final List<Symbol> path) {
 		
 		int cnt = 0;
 
-		for (int y = 0; y < m.h; y++) {
+		for (int y = 0; y < this.m.h; y++) {
 			int pathCrossed = 0;
 			String pathChars = "";
-			for (int x = 0; x < m.w; x++)
+			for (int x = 0; x < this.m.w; x++)
 				if (onPath(x, y, path))
-					pathChars += m.getChar(x, y);
+					pathChars += this.m.getChar(x, y);
 				else {
 					if (!pathChars.isEmpty()) {
 						pathCrossed +=
-							pathChars
-							.replace("─", "")
-							.replace("┌┐", "")
-							.replace("└┘", "")
-							.replace("┌┘", "│")
-							.replace("└┐", "│")
-							.length(); // all │
+								pathChars
+								.replace("─", "")
+								.replace("┌┐", "")
+								.replace("└┘", "")
+								.replace("┌┘", "│")
+								.replace("└┐", "│")
+								.length(); // all │
 						pathChars = "";
 					}
 					if (pathCrossed % 2 == 1) {
-						if (pp)
-							m.chars[x][y] = enclosed; // just for output
+						if (this.pp)
+							this.m.chars[x][y] = enclosed; // just for output
 						cnt++;
 					}
 				}
 		}
 
-		if (pp)
-			printPath(path, enclosed);
+		if (this.pp)
+			printPath(path);
 
 		return cnt;
 		
 	}
 
-	private boolean onPath(int x, int y, List<Symbol> path) {
-		for (Symbol s : path)
+	private boolean onPath(final int x, final int y, final List<Symbol> path) {
+		for (final Symbol s : path)
 			if (s.x == x && s.y == y)
 				return true;
 		return false;
@@ -62,16 +63,24 @@ public class Part2 extends Part1 {
 
 	private static char enclosed = '◉';
 	
-	private void printPath(List<Symbol> path, char keep) {
-		for (int y = 0; y < m.h; y++) {
+	private void printPath(final List<Symbol> path) {
+		for (int y = 0; y < this.m.h; y++) {
 			String line = "";
-			for (int x = 0; x < m.w; x++) {
-				char c = m.getChar(x, y);
-				line += c == keep || onPath(x, y, path) ? c : ' ';
+			for (int x = 0; x < this.m.w; x++) {
+				final char c = this.m.getChar(x, y);
+				line += onPath(x, y, path) ? pStrong.get(c) : c;
 			}
 			System.out.println(line);
 		}
 	}
+	
+	private static Map<Character, Character> pStrong =
+			Map.of('│', '║',
+					'┌', '╔',
+					'┐', '╗',
+					'─', '═',
+					'┘', '╝',
+					'└', '╚');
 
 	@Override
 	public void aTest() {

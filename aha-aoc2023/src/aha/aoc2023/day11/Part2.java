@@ -37,8 +37,7 @@ public class Part2 extends Part1 {
 		
 		for (int i = 0; i < galaxies.size(); i++)
 			for (int j = i + 1; j < galaxies.size(); j++)
-				this.res +=
-						getDistance(galaxies.get(i), galaxies.get(j), emptyRows, emptyCols);
+				this.res += getDistance(galaxies.get(i), galaxies.get(j), emptyRows, emptyCols);
 		
 		return this;
 	}
@@ -51,21 +50,18 @@ public class Part2 extends Part1 {
 	}
 	
 	private long getDistance(final int n1, final int n2, final List<Integer> emptyNs) {
-		final long d = Math.abs(n1 - n2);
-		if (d == 0 || d == 1)
-			return d;
-		else {
-			final long empties =
-					IntStream.range(Math.min(n1, n2), Math.max(n1, n2))
-					.filter(i -> emptyNs.contains(i))
-					.count();
-			return d - empties + empties * this.expand;
-		}
+		final long
+			d = Math.abs(n1 - n2),
+			cntEmpty =
+				IntStream.range(Math.min(n1, n2) + 1, Math.max(n1, n2))
+				.filter(i -> emptyNs.contains(i))
+				.count();
+		return d - cntEmpty + cntEmpty * this.expand;
 	}
 
 	@Override
 	public void aTest() {
-		assertEquals(374, new Part2().setExpand(2).compute("test.txt").res);
+		assertEquals(374, new Part2().setExpand(2).compute("test.txt").res); // Part1
 		assertEquals(1030, new Part2().setExpand(10).compute("test.txt").res);
 		assertEquals(8410, new Part2().setExpand(100).compute("test.txt").res);
 	}

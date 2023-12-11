@@ -60,41 +60,33 @@ public class Part1 {
 		for (int i = 0; i < galaxies.size(); i++)
 			for (int j = i + 1; j < galaxies.size(); j++)
 				this.res +=
-				Math.abs(galaxies.get(i).x - galaxies.get(j).x)
-				+ Math.abs(galaxies.get(i).y - galaxies.get(j).y);
+						Math.abs(galaxies.get(i).x - galaxies.get(j).x)
+						+ Math.abs(galaxies.get(i).y - galaxies.get(j).y);
 		
 		return this;
 	}
 
-	final List<Symbol> getGalaxies(final List<String> lines) {
-		return new CharMap(lines).getAll('#');
-	}
-		
-	final List<Integer> getEmptyCols(final List<String> lines) {
-		final List<Integer> emptyCols =
-				IntStream.range(0, lines.get(0).length())
-				.filter(x -> isEmptyCol(lines, x))
-				.boxed()
-				.collect(Collectors.toList());
-		return emptyCols;
-	}
-	
 	final List<String> getLines(final String file) {
-		final List<String> lines = new ArrayList<>(Utils.readLines(dir + file));
-		return lines;
+		return Utils.readLines(dir + file);
 	}
 
-	private boolean isEmptyCol(final List<String> lines, final int x) {
-		return
-				isEmpty(
-					lines.stream()
-					.map(line -> "" + line.charAt(x))
-					.reduce("", (res, c) -> res + c)
-				);
-	}
-	
 	final boolean isEmpty(final String s) {
 		return s.matches("[.]+");
+	}
+
+	final List<Integer> getEmptyCols(final List<String> lines) {
+		return	IntStream.range(0, lines.get(0).length())
+				.filter(x -> isEmpty(
+								lines.stream()
+								.map(line -> "" + line.charAt(x))
+								.reduce("", (res, c) -> res + c)
+								))
+				.boxed()
+				.collect(Collectors.toList());
+	}
+		
+	final List<Symbol> getGalaxies(final List<String> lines) {
+		return new ArrayList<>(new CharMap(lines).getAll('#'));
 	}
 	
 	@Test
