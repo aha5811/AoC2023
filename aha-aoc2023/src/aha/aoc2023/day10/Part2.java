@@ -25,7 +25,7 @@ public class Part2 extends Part1 {
 			String pathChars = "";
 			for (int x = 0; x < m.w; x++)
 				if (onPath(x, y, path))
-					pathChars += m.getSymbol(x, y);
+					pathChars += m.getChar(x, y);
 				else {
 					if (!pathChars.isEmpty()) {
 						pathCrossed +=
@@ -66,7 +66,7 @@ public class Part2 extends Part1 {
 		for (int y = 0; y < m.h; y++) {
 			String line = "";
 			for (int x = 0; x < m.w; x++) {
-				char c = m.getSymbol(x, y);
+				char c = m.getChar(x, y);
 				line += c == keep || onPath(x, y, path) ? c : ' ';
 			}
 			System.out.println(line);
@@ -85,7 +85,8 @@ public class Part2 extends Part1 {
 
 	@Override
 	public void main() {
-		assertEquals(495, new Part2().withPrint().compute("input.txt").res);
+		// assertEquals(495, new Part2().withPrint().compute("input.txt").res);
+		assertEquals(495, new Part2().compute("input.txt").res);
 	}
 
 }

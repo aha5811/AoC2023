@@ -69,7 +69,7 @@ public class Part1 {
 		}
 		
 		void addIf(final List<Symbol> syms, final int x, final int y) {
-			final Character c = getSymbol(x, y);
+			final Character c = getChar(x, y);
 			if (c != null)
 				syms.add(new Symbol(c, x, y));
 		}
@@ -84,8 +84,8 @@ public class Part1 {
 			return ret;
 		}
 		
-		public Character getSymbol(final int x, final int y) {
-			Character c = super.getSymbol(x, y);
+		public Character getChar(final int x, final int y) {
+			Character c = super.getChar(x, y);
 			return c == null ? null : Character.isDigit(c) || c == '.' ? null : c;
 		}
 
