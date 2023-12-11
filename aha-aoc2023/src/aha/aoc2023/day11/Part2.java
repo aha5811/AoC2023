@@ -6,7 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.IntStream;
 
-import aha.aoc2023.Utils.CharMap;
 import aha.aoc2023.Utils.Symbol;
 
 public class Part2 extends Part1 {
@@ -34,7 +33,7 @@ public class Part2 extends Part1 {
 
 		final List<Integer> emptyCols = getEmptyCols(lines);
 
-		final List<Symbol> galaxies = getGalaxies(new CharMap(lines));
+		final List<Symbol> galaxies = getGalaxies(lines);
 		
 		for (int i = 0; i < galaxies.size(); i++)
 			for (int j = i + 1; j < galaxies.size(); j++)

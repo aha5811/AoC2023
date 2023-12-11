@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.FixMethodOrder;
 import org.junit.Test;
@@ -17,7 +18,7 @@ public class Part1 {
 	
 	static String dir = "day10/";
 	
-	D10Map m;
+	Day10Map m;
 
 	long res = 0;
 
@@ -25,11 +26,11 @@ public class Part1 {
 	}
 	
 	final Part1 compute(final String file) {
-		this.m = new D10Map(dir + file);
+		this.m = new Day10Map(dir + file);
 
 		replace();
 
-		final Symbol s = getStart();
+		final Symbol s = m.getAll('S').get(0);
 		
 		final List<Symbol> possible = getPossibleNeighbours(s);
 		
@@ -52,27 +53,21 @@ public class Part1 {
 		return this;
 	}
 
+	private static Map<Character, Character> repl =
+			Map.of('|', '│',
+					'F', '┌',
+					'7', '┐',
+					'-', '─',
+					'J', '┘',
+					'L', '└');
+	
 	private void replace() {
 		for (int x = 0; x < this.m.w; x++)
 			for (int y = 0; y < this.m.h; y++) {
 				char c = this.m.getChar(x, y);
-				final int p = "|FJL7-".indexOf(c);
-				if (p != -1)
-					c = "│┌┘└┐─".toCharArray()[p];
-				else if (c != 'S')
-					c = ' ';
-				this.m.chars[x][y] = c;
+				if (c != 'S' && repl.containsKey(c))
+					this.m.chars[x][y] = repl.get(c);
 			}
-	}
-	
-	private Symbol getStart() {
-		for (int x = 0; x < this.m.w; x++)
-			for (int y = 0; y < this.m.h; y++) {
-				final Symbol ret = this.m.getSymbol(x, y);
-				if (ret.c == 'S')
-					return ret;
-			}
-		return null;
 	}
 	
 	private List<Symbol> getPossibleNeighbours(final Symbol s) {
@@ -140,9 +135,9 @@ public class Part1 {
 		return path.size() / 2;
 	}
 	
-	static class D10Map extends CharMap {
+	static class Day10Map extends CharMap {
 		
-		public D10Map(final String file) {
+		public Day10Map(final String file) {
 			super(file);
 		}
 
@@ -152,39 +147,42 @@ public class Part1 {
 			final char c = at.c;
 			// either dx or dy == 0, the other one is -1 or +1
 			if (c == '│')
-				return dx != 0 ? null : getSymbol(x, y + dy);
+				return	dx != 0
+						? null
+						: getSymbol(x, y + dy);
 			else if (c == '─')
-				return dy != 0 ? null : getSymbol(x + dx, y);
+				return	dy != 0
+						? null
+						: getSymbol(x + dx, y);
 			else if (c == '└')
 				return	dy == 1
-				? getSymbol(x + 1, y)
+						? getSymbol(x + 1, y)
 						: dx == -1
-								? getSymbol(x, y - 1)
-								: null;
+							? getSymbol(x, y - 1)
+							: null;
 			else if (c == '┘')
 				return	dy == 1
-				? getSymbol(x - 1, y)
+						? getSymbol(x - 1, y)
 						: dx == 1
-								? getSymbol(x, y - 1)
-								: null;
+							? getSymbol(x, y - 1)
+							: null;
 			else if (c == '┐')
 				return 	dy == -1
-				? getSymbol(x - 1, y)
+						? getSymbol(x - 1, y)
 						: dx == 1
-								? getSymbol(x, y + 1)
-								: null;
+							? getSymbol(x, y + 1)
+							: null;
 			else if (c == '┌')
 				return	dy == -1
-				? getSymbol(x + 1, y)
+						? getSymbol(x + 1, y)
 						: dx == -1
-								? getSymbol(x, y + 1)
-								: null;
+							? getSymbol(x, y + 1)
+							: null;
 			else
 				return null;
 		}
 
 	}
-
 
 	@Test
 	public void aTest() {

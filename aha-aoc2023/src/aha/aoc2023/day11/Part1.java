@@ -55,7 +55,7 @@ public class Part1 {
 			}
 		}
 
-		final List<Symbol> galaxies = getGalaxies(new CharMap(lines));
+		final List<Symbol> galaxies = getGalaxies(lines);
 
 		for (int i = 0; i < galaxies.size(); i++)
 			for (int j = i + 1; j < galaxies.size(); j++)
@@ -65,18 +65,11 @@ public class Part1 {
 		
 		return this;
 	}
-	
-	final List<Symbol> getGalaxies(final CharMap m) {
-		final List<Symbol> galaxies = new ArrayList<>();
-		for (int x = 0; x < m.w; x++)
-			for (int y = 0; y < m.h; y++) {
-				final Symbol s = m.getSymbol(x, y);
-				if (s.c == '#')
-					galaxies.add(s);
-			}
-		return galaxies;
+
+	final List<Symbol> getGalaxies(final List<String> lines) {
+		return new CharMap(lines).getAll('#');
 	}
-	
+		
 	final List<Integer> getEmptyCols(final List<String> lines) {
 		final List<Integer> emptyCols =
 				IntStream.range(0, lines.get(0).length())

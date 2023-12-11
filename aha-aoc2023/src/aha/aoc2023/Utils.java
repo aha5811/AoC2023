@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -97,6 +98,17 @@ public class Utils {
 					line += getChar(x, y);
 				ret += line + "\n";
 			}
+			return ret;
+		}
+		
+		public List<Symbol> getAll(char c) {
+			final List<Symbol> ret = new ArrayList<>();
+			for (int x = 0; x < w; x++)
+				for (int y = 0; y < h; y++) {
+					final Symbol s = getSymbol(x, y);
+					if (s.c == c)
+						ret.add(s);
+				}
 			return ret;
 		}
 

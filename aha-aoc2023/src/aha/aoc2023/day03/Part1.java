@@ -9,8 +9,8 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 
-import aha.aoc2023.Utils;
 import aha.aoc2023.Utils.CharMap;
+import aha.aoc2023.Utils.Symbol;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class Part1 {
@@ -68,12 +68,6 @@ public class Part1 {
 			super(file);
 		}
 		
-		void addIf(final List<Symbol> syms, final int x, final int y) {
-			final Character c = getChar(x, y);
-			if (c != null)
-				syms.add(new Symbol(c, x, y));
-		}
-
 		List<Symbol> getSymbolsAround(final int y, final int xStart, final int xEnd) {
 			final List<Symbol> ret = new LinkedList<>();
 			for (int xx = xStart - 1; xx <= xEnd + 1; xx++)
@@ -83,25 +77,19 @@ public class Part1 {
 			addIf(ret, xEnd + 1, y);
 			return ret;
 		}
-		
+
+		private void addIf(final List<Symbol> syms, final int x, final int y) {
+			Symbol s = getSymbol(x, y);
+			if (s != null)
+				syms.add(s);
+		}
+
+		@Override
 		public Character getChar(final int x, final int y) {
 			Character c = super.getChar(x, y);
 			return c == null ? null : Character.isDigit(c) || c == '.' ? null : c;
 		}
-
 		
-	}
-
-	static class Symbol {
-		char c;
-		int x;
-		int y;
-
-		public Symbol(final char c, final int x, final int y) {
-			this.c = c;
-			this.x = x;
-			this.y = y;
-		}
 	}
 	
 	@Test
