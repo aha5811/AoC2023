@@ -4,23 +4,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runners.MethodSorters;
-
+import aha.aoc2023.Part;
 import aha.aoc2023.Utils;
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class Part1 {
+public class Part1 extends Part {
 	
 	private static String dir = "day04/";
 	
-	int res = 0;
-
 	public Part1() {
 	}
 	
-	Part1 compute(final String file) {
+	@Override
+	public Part1 compute(final String file) {
 		this.res = getCards(file).stream()
 				.map(line -> matchCount(line))
 				.mapToInt(m -> m == 0 ? 0 : (int) Math.pow(2, m - 1))
@@ -40,12 +35,12 @@ public class Part1 {
 		return (int) Utils.toIs(parts[1]).stream().filter(wins::contains).count();
 	}
 		
-	@Test
+	@Override
 	public void aTest() {
 		assertEquals(13, new Part1().compute("test.txt").res);
 	}
 	
-	@Test
+	@Override
 	public void main() {
 		assertEquals(24542, new Part1().compute("input.txt").res);
 	}

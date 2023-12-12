@@ -18,7 +18,7 @@ public class Part2 extends Part1 {
 	}
 
 	@Override
-	Part1 compute(final String file) {
+	public Part2 compute(final String file) {
 		final List<String> lines = getLines(file);
 
 		final List<Integer> emptyRows = new LinkedList<>();

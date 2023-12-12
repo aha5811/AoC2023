@@ -9,26 +9,21 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runners.MethodSorters;
-
+import aha.aoc2023.Part;
 import aha.aoc2023.Utils;
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class Part1 {
+public class Part1 extends Part {
 	
 	private static String dir = "day02/";
 	
-	int res;
-
 	public Part1() {
 	}
-	
-	Part1 compute(final String file, final Map<String, Integer> bagC2N) {
+
+	@Override
+	public Part1 compute(final String file) {
 		this.res =
 				games(file)
-				.filter(game -> valid(game, bagC2N))
+				.filter(game -> valid(game, bagContent))
 				.mapToInt(game -> game.id)
 				.sum();
 
@@ -81,14 +76,14 @@ public class Part1 {
 	
 	public final static Map<String, Integer> bagContent = Map.of("red", 12, "green", 13, "blue", 14);
 
-	@Test
+	@Override
 	public void aTest() {
-		assertEquals(8, new Part1().compute("test.txt", bagContent).res);
+		assertEquals(8, new Part1().compute("test.txt").res);
 	}
 	
-	@Test
+	@Override
 	public void main() {
-		assertEquals(1853, new Part1().compute("input.txt", bagContent).res);
+		assertEquals(1853, new Part1().compute("input.txt").res);
 	}
 
 }

@@ -9,25 +9,20 @@ import java.util.ListIterator;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runners.MethodSorters;
-
+import aha.aoc2023.Part;
 import aha.aoc2023.Utils;
 import aha.aoc2023.Utils.CharMap;
 import aha.aoc2023.Utils.Symbol;
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class Part1 {
+public class Part1 extends Part {
 	
 	static String dir = "day11/";
 	
-	long res = 0;
-
 	public Part1() {
 	}
 	
-	Part1 compute(final String file) {
+	@Override
+	public Part1 compute(final String file) {
 		final List<String> lines = getLines(file);
 
 		// expand empty rows
@@ -60,8 +55,8 @@ public class Part1 {
 		for (int i = 0; i < galaxies.size(); i++)
 			for (int j = i + 1; j < galaxies.size(); j++)
 				this.res +=
-						Math.abs(galaxies.get(i).x - galaxies.get(j).x)
-						+ Math.abs(galaxies.get(i).y - galaxies.get(j).y);
+				Math.abs(galaxies.get(i).x - galaxies.get(j).x)
+				+ Math.abs(galaxies.get(i).y - galaxies.get(j).y);
 		
 		return this;
 	}
@@ -77,24 +72,24 @@ public class Part1 {
 	final List<Integer> getEmptyCols(final List<String> lines) {
 		return	IntStream.range(0, lines.get(0).length())
 				.filter(x -> isEmpty(
-								lines.stream()
-								.map(line -> "" + line.charAt(x))
-								.reduce("", (res, c) -> res + c)
-								))
+						lines.stream()
+						.map(line -> "" + line.charAt(x))
+						.reduce("", (res, c) -> res + c)
+						))
 				.boxed()
 				.collect(Collectors.toList());
 	}
-		
+	
 	final List<Symbol> getGalaxies(final List<String> lines) {
 		return new ArrayList<>(new CharMap(lines).getAll('#'));
 	}
 	
-	@Test
+	@Override
 	public void aTest() {
 		assertEquals(374, new Part1().compute("test.txt").res);
 	}
 	
-	@Test
+	@Override
 	public void main() {
 		assertEquals(9639160, new Part1().compute("input.txt").res);
 	}

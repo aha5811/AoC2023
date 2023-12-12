@@ -6,15 +6,15 @@ import java.util.Arrays;
 import java.util.List;
 
 public class Part2 extends Part1 {
-	
+
 	@Override
-	Part2 compute(final String file) {
-
+	public Part2 compute(final String file) {
+		
 		final List<String> cards = getCards(file);
-
+		
 		final int[] piles = new int[cards.size()]; // piles for each card number
 		Arrays.fill(piles, 1); // start pile size
-
+		
 		int i = 0;
 		for (final String card : cards) {
 			final int m = matchCount(card);
@@ -23,20 +23,20 @@ public class Part2 extends Part1 {
 				piles[cardNumber] += piles[i];
 			i++;
 		}
-		
+
 		this.res = Arrays.stream(piles).sum();
-		
+
 		return this;
 	}
-
+	
 	@Override
 	public void aTest() {
 		assertEquals(30, new Part2().compute("test.txt").res);
 	}
-
+	
 	@Override
 	public void main() {
 		assertEquals(8736438, new Part2().compute("input.txt").res);
 	}
-
+	
 }

@@ -7,14 +7,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runners.MethodSorters;
-
+import aha.aoc2023.Part;
 import aha.aoc2023.Utils;
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class Part1 {
+public class Part1 extends Part {
 
 	static String dir = "day08/";
 
@@ -24,12 +20,11 @@ public class Part1 {
 	private Map<String, String[]> n2rl;
 	Stream<String> getNodes() { return this.n2rl.keySet().stream(); }
 
-	long res;
-	
 	public Part1() {
 	}
 
-	final Part1 compute(final String file) {
+	@Override
+	public final Part1 compute(final String file) {
 		parseStructures(file);
 		
 		this.res = countSteps();
@@ -71,13 +66,13 @@ public class Part1 {
 		return this.n2rl.get(node)[instruction];
 	}
 
-	@Test
+	@Override
 	public void aTest() {
 		assertEquals(2, new Part1().compute("test1_1.txt").res);
 		assertEquals(6, new Part1().compute("test1_2.txt").res);
 	}
 
-	@Test
+	@Override
 	public void main() {
 		assertEquals(17263, new Part1().compute("input.txt").res);
 	}

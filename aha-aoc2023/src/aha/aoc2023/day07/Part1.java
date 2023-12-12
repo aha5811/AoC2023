@@ -12,23 +12,18 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runners.MethodSorters;
-
+import aha.aoc2023.Part;
 import aha.aoc2023.Utils;
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
-public class Part1 {
+public class Part1 extends Part {
 	
 	static String dir = "day07/";
 	
-	long res = 0;
-
 	public Part1() {
 	}
 	
-	final Part1 compute(final String file) {
+	@Override
+	public final Part1 compute(final String file) {
 		final List<HB> hbs =
 				Utils.streamLines(dir + file)
 				.map(line -> toHB(line))
@@ -132,12 +127,12 @@ public class Part1 {
 			return R_HIGH;
 	}
 
-	@Test
+	@Override
 	public void aTest() {
 		assertEquals(6440, new Part1().compute("test.txt").res);
 	}
 	
-	@Test
+	@Override
 	public void main() {
 		assertEquals(249638405, new Part1().compute("input.txt").res);
 	}

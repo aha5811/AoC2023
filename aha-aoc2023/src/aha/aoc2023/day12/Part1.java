@@ -1,4 +1,4 @@
-package aha.aoc2023.day00;
+package aha.aoc2023.day12;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -6,7 +6,7 @@ import aha.aoc2023.Part;
 
 public class Part1 extends Part {
 
-	static String dir = "day__/";
+	static String dir = "day12/";
 	
 	public Part1() {
 	}
@@ -18,7 +18,7 @@ public class Part1 extends Part {
 	
 	@Override
 	public void aTest() {
-		assertEquals(0, new Part1().compute("test.txt").res);
+		assertEquals(21, new Part1().compute("test.txt").res);
 	}
 
 	@Override

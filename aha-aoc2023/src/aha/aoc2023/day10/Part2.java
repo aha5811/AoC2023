@@ -8,19 +8,19 @@ import java.util.Map;
 import aha.aoc2023.Utils.Symbol;
 
 public class Part2 extends Part1 {
-	
+
 	private boolean pp = false;
-	
+
 	private Part2 withPrint() {
 		this.pp = true;
 		return this;
 	}
-	
+
 	@Override
 	long getRes(final List<Symbol> path) {
-		
-		int cnt = 0;
 
+		int cnt = 0;
+		
 		for (int y = 0; y < this.m.h; y++) {
 			int pathCrossed = 0;
 			String pathChars = "";
@@ -46,23 +46,23 @@ public class Part2 extends Part1 {
 					}
 				}
 		}
-
+		
 		if (this.pp)
 			printPath(path);
-
-		return cnt;
 		
-	}
+		return cnt;
 
+	}
+	
 	private boolean onPath(final int x, final int y, final List<Symbol> path) {
 		for (final Symbol s : path)
 			if (s.x == x && s.y == y)
 				return true;
 		return false;
 	}
-
-	private static char enclosed = '◉';
 	
+	private static char enclosed = '◉';
+
 	private void printPath(final List<Symbol> path) {
 		for (int y = 0; y < this.m.h; y++) {
 			String line = "";
@@ -73,7 +73,7 @@ public class Part2 extends Part1 {
 			System.out.println(line);
 		}
 	}
-	
+
 	private static Map<Character, Character> pStrong =
 			Map.of('│', '║',
 					'┌', '╔',
@@ -81,7 +81,7 @@ public class Part2 extends Part1 {
 					'─', '═',
 					'┘', '╝',
 					'└', '╚');
-
+	
 	@Override
 	public void aTest() {
 		assertEquals(1,  new Part2().compute("test.txt").res,    "test");
@@ -90,12 +90,15 @@ public class Part2 extends Part1 {
 		assertEquals(8,  new Part2().compute("test2_3.txt").res, "test2_3");
 		assertEquals(10, new Part2().compute("test2_4.txt").res, "test2_4");
 		assertEquals(1,  new Part2().compute("test2_5.txt").res, "test2_5");
-	}
 
+		// assertEquals(0, new Part2().withPrint().compute("test2_6.txt").res, "test2_6");
+		// Merry Christmas! by /u/Boojum
+	}
+	
 	@Override
 	public void main() {
 		// assertEquals(495, new Part2().withPrint().compute("input.txt").res);
 		assertEquals(495, new Part2().compute("input.txt").res);
 	}
-
+	
 }
