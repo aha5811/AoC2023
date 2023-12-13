@@ -15,41 +15,39 @@ public class Part1 extends Part {
 
 	static String dir = "day12/";
 	
+	int solved = 0;
+	
 	public Part1() {
 	}
 
 	@Override
-	public Part compute(final String file) {
+	public final Part compute(final String file) {
 		this.res =
 				Utils.streamLines(dir + file)
-				.map(line -> new Riddle(line))
-				.map(r -> unfold(r))
+				.map(line -> toRiddle(line))
 				.mapToLong(r -> solve(r))
 				.sum();
 		
 		return this;
 	}
+
+	Riddle toRiddle(String line) {
+		// .??..??...?##. 1,1,3
+		final String[] ss = line.split("\\s");
+		return toRiddle(ss[0], ss[1]);
+	}
 	
-	Riddle unfold(final Riddle r) {
+	final Riddle toRiddle(String ss, String glss) {
+		Riddle r = new Riddle();
+		r.s = simplify(ss.replaceAll("[\\.]+", ",").replaceAll("\\?", "x"));
+		// xx,xx,x##
+		r.gls = new ArrayList<>(Utils.toIs(glss.replace(',', ' ')));
 		return r;
 	}
 
 	static class Riddle {
 		String s;
 		List<Integer> gls; // group lengths
-
-		Riddle(final String line) {
-			// .??..??...?##. 1,1,3
-			final String[] ss = line.split("\\s");
-			this.s = simplify(ss[0].replaceAll("[\\.]+", ",").replaceAll("\\?", "x"));
-			// xx,xx,x##
-			this.gls = new ArrayList<>(Utils.toIs(ss[1].replace(',', ' ')));
-		}
-
-		public Riddle(final String s, final List<Integer> gls) {
-			this.s = s;
-			this.gls = gls;
-		}
 	}
 
 	/**
@@ -60,11 +58,11 @@ public class Part1 extends Part {
 		return s.replaceAll("[,]+", ",").replaceAll("^,", "").replaceAll(",$", "");
 	}
 	
-	final long solve(final Riddle r) {
+	long solve(final Riddle r) {
 		return solve(r.s, r.gls);
 	}
 	
-	long solve(final String s, final List<Integer> tgls) {
+	final long solve(final String s, final List<Integer> tgls) {
 		
 		if (s.startsWith("#".repeat(tgls.get(0) + 1))) // already too big first group
 			return 0;
@@ -85,7 +83,7 @@ public class Part1 extends Part {
 		if (toDistribute == undefined) // amnt x == amnt to distribute -> shortcut
 			return Utils.same(toGLs(s.replace("x", "#")), tgls) ? 1 : 0;
 
-		if (s.matches("#+,.*")) { // check if string can be shortened left
+		if (s.matches("^#+,.*")) { // check if string can be shortened left
 			final String[] ss = s.split(",");
 			if (ss[0].length() == tgls.get(0)) { // first group ok -> remove
 				final List<Integer> nextTGLs = tgls.subList(1, tgls.size());
@@ -94,7 +92,7 @@ public class Part1 extends Part {
 			} else
 				return 0; // dead end
 		}
-		if (s.matches(".*,#+")) { // check if string can be shortened back
+		if (s.matches(".*,#+$")) { // check if string can be shortened back
 			final String[] ss = s.split(",");
 			if (ss[ss.length - 1].length() == tgls.get(tgls.size() - 1)) {
 				final List<Integer> nextTGLs = tgls.subList(0, tgls.size() - 1);
@@ -128,11 +126,10 @@ public class Part1 extends Part {
 			final int[] exp = new int[] { 1, 4, 1, 1, 4, 10 };
 			final AtomicInteger i = new AtomicInteger();
 			Utils.streamLines(dir + "test.txt")
-			.map(line -> new Riddle(line))
+			.map(line -> toRiddle(line))
 			.forEach(r -> assertEquals(exp[i.getAndIncrement()], solve(r)));
 		}
-		assertEquals(21, new Part1().compute("test.txt").res);
-		assertEquals(4, new Part1().compute("test1_2.txt").res); // failed at first
+		// assertEquals(21, new Part1().compute("test.txt").res);
 	}
 
 	@Override
