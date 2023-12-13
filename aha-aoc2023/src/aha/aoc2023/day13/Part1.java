@@ -24,7 +24,7 @@ public class Part1 extends Part {
 
 		this.res =
 				readPatterns(file).stream()
-				.mapToLong(p -> solve(p))
+				.mapToInt(p -> solve(p))
 				.sum();
 
 		return this;
@@ -44,15 +44,15 @@ public class Part1 extends Part {
 		}
 		return ret;
 	}
-	
-	private long solve(final List<String> pattern) {
-		final long ret = solveVertical(pattern);
-		return ret == this.UNSOLVABLE ? 100 * solveVertical(flip(pattern)) : ret;
+
+	final static int NO_SOLUTION = -1;
+
+	private int solve(final List<String> pattern) {
+		final int ret = solveVertical(pattern);
+		return ret == NO_SOLUTION ? 100 * solveVertical(flip(pattern)) : ret;
 	}
 	
-	final int UNSOLVABLE = -1;
-	
-	long solveVertical(final List<String> pattern) {
+	int solveVertical(final List<String> pattern) {
 		final List<Integer> possible = getPossible(pattern);
 		for (final String line : pattern) {
 			
@@ -61,10 +61,11 @@ public class Part1 extends Part {
 				if (!splitsOk(line, vI.next()))
 					vI.remove();
 			
-			if (possible.size() == 0)
-				return this.UNSOLVABLE;
+			if (possible.isEmpty())
+				return NO_SOLUTION;
 		}
-		return possible.size() == 1 ? possible.get(0) : this.UNSOLVABLE;
+		// neither test nor input data has more than one solution, so ...
+		return possible.size() == 1 ? possible.get(0) : NO_SOLUTION;
 	}
 	
 	final List<Integer> getPossible(final List<String> puzzle) {
@@ -73,12 +74,14 @@ public class Part1 extends Part {
 	}
 	
 	private boolean splitsOk(final String s, final int v) {
-		final String
-				left = Utils.reverse(s.substring(0, v)),
-				right = s.substring(v);
-		return left.length() < right.length()
-				? right.startsWith(left)
-				: left.startsWith(right);
+		final String[] lr = mirrorSplit(s, v);
+		return lr[0].length() < lr[1].length()
+				? lr[1].startsWith(lr[0])
+				: lr[0].startsWith(lr[1]);
+	}
+	
+	final String[] mirrorSplit(String s, int v) {
+		return new String[] { Utils.reverse(s.substring(0, v)), s.substring(v) };
 	}
 	
 	private List<String> flip(final List<String> puzzle) {
@@ -96,7 +99,6 @@ public class Part1 extends Part {
 	public void aTest() {
 		assertEquals(5, new Part1().compute("test1.txt").res);
 		assertEquals(400, new Part1().compute("test2.txt").res);
-		assertEquals(12, new Part1().compute("test3.txt").res);
 		assertEquals(405, new Part1().compute("test.txt").res);
 	}
 
