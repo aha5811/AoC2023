@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import aha.aoc2023.Utils;
 
 public class Part2 extends Part1 {
-
+	
 	@Override
 	Riddle unfold(final Riddle r) {
 		String s = "";
@@ -21,12 +21,15 @@ public class Part2 extends Part1 {
 		s = s.substring(1);
 		return new Riddle(s, gls);
 	}
-
+	
 	@Override
 	long solve(final String s, final List<Integer> tgls) {
-		return super.solve(s, tgls);
+		final long ret = super.solve(s, tgls);
+		if (ret == 0)
+			System.out.println(s + " " + tgls);
+		return ret;
 	}
-	
+
 	@Override
 	public void aTest() {
 		{
@@ -39,10 +42,10 @@ public class Part2 extends Part1 {
 		}
 		assertEquals(525152, new Part1().compute("test.txt").res);
 	}
-	
+
 	@Override
 	public void main() {
 		// assertEquals(0, new Part2().compute("input.txt").res);
 	}
-	
+
 }
