@@ -2,6 +2,7 @@ package aha.aoc2023.day14;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,27 +20,28 @@ public class Part2 extends Part1 {
 
 	@Override
 	void tilt() {
-		
+				
 		final Map<String, Integer> m2c = new HashMap<>(); // for cycle detection
-		int cycle = 0;
-		boolean fastforward = false;
-		while (cycle < this.cycles) {
+		final Map<Integer, String> c2m = new HashMap<>(); // and back
+		
+		for (int cycle = 0; cycle < this.cycles; cycle++) {
+
 			tiltCycle();
-			if (!fastforward) {
-				final String mKey = this.m.toString();
-				if (!m2c.containsKey(mKey))
-					m2c.put(mKey, cycle);
-				else {
-					final int
+
+			final String mKey = this.m.toString();
+			if (!m2c.containsKey(mKey)) {
+				m2c.put(mKey, cycle);
+				c2m.put(cycle, mKey);
+			} else {
+				final int
 					lastHit = m2c.get(mKey),
 					cycleLength = cycle - lastHit;
-					cycle = this.cycles - (this.cycles - lastHit) % cycleLength;
-					fastforward = true;
-				}
+				String mEnd = c2m.get(lastHit - 1 + (this.cycles - lastHit) % cycleLength);
+				this.m = new CharMap(Arrays.asList(mEnd.split("\\n")));
+				break;
 			}
-			cycle++;
 		}
-		
+
 	}
 
 	private void tiltCycle() {
