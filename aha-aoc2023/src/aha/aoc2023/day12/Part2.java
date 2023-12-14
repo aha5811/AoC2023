@@ -53,7 +53,8 @@ public class Part2 extends Part1 {
 
 	@Override
 	public void main() {
-		assertEquals(0, new Part2().withPrint().compute("input.txt").res);
+		// assertEquals(548241300348335l, new Part2().withPrint().compute("input.txt").res);
+		assertEquals(548241300348335l, new Part2().compute("input.txt").res);
 	}
 
 }
