@@ -74,7 +74,7 @@ public class Part1 extends Part {
 				.filter(x -> isEmpty(
 						lines.stream()
 						.map(line -> "" + line.charAt(x))
-						.reduce("", (res, c) -> res + c)
+						.collect(Collectors.joining())
 						))
 				.boxed()
 				.collect(Collectors.toList());
