@@ -11,7 +11,7 @@ public class Part2 extends Part1 {
 
 	private boolean pp = false;
 
-	private Part2 withPrint() {
+	private Part2 setPP() {
 		this.pp = true;
 		return this;
 	}
@@ -91,13 +91,13 @@ public class Part2 extends Part1 {
 		assertEquals(10, new Part2().compute("test2_4.txt").res, "test2_4");
 		assertEquals(1,  new Part2().compute("test2_5.txt").res, "test2_5");
 
-		// assertEquals(0, new Part2().withPrint().compute("test2_6.txt").res, "test2_6");
+		// assertEquals(0, new Part2().setPP().compute("test2_6.txt").res, "test2_6");
 		// Merry Christmas! by /u/Boojum
 	}
 	
 	@Override
 	public void main() {
-		// assertEquals(495, new Part2().withPrint().compute("input.txt").res);
+		// assertEquals(495, new Part2().setPP().compute("input.txt").res);
 		assertEquals(495, new Part2().compute("input.txt").res);
 	}
 	

@@ -10,7 +10,7 @@ public class Part2 extends Part1 {
 	
 	private boolean pp = false;
 	
-	private Part2 withPrint() {
+	private Part2 setPP() {
 		this.pp = true;
 		return this;
 	}
@@ -48,12 +48,12 @@ public class Part2 extends Part1 {
 			.map(line -> toRiddle(line))
 			.forEach(r -> assertEquals(exp[i.getAndIncrement()], solve(r), "line " + i.get()));
 		}
-		// assertEquals(525152, new Part2().withPrint().compute("test.txt").res);
+		// assertEquals(525152, new Part2().setPP().compute("test.txt").res);
 	}
 
 	@Override
 	public void main() {
-		// assertEquals(548241300348335l, new Part2().withPrint().compute("input.txt").res);
+		// assertEquals(548241300348335l, new Part2().setPP().compute("input.txt").res);
 		assertEquals(548241300348335l, new Part2().compute("input.txt").res);
 	}
 
