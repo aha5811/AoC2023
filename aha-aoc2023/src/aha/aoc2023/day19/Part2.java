@@ -21,7 +21,7 @@ public class Part2 extends Part1 {
 		.filter(line -> !line.isEmpty() && !line.startsWith("{"))
 		.forEach(line -> addRules(this.name2rules, line));
 
-		this.res = compute(new LinkedList<>(), "in");
+		this.res = find(new LinkedList<>(), "in");
 		
 		return this;
 	}
@@ -29,26 +29,24 @@ public class Part2 extends Part1 {
 	static final int MIN = 1;
 	static final int MAX = 4000;
 	
-	private long compute(final List<String> preds, final String name) {
+	private long find(final List<String> preds, final String name) {
 		System.out.println("c " + preds + " " + name);
 		if (name.equals("A"))
-			return compute(preds);
+			return count(preds); // compute distinct
 		else {
 			int ret = 0;
 			final List<String> newPreds = new LinkedList<>();
-			for (final Rule r : this.name2rules.get(name))
-				if (!r.res.equals("R")) {
-					newPreds.add(r.pred);
-					ret += compute(combine(preds, newPreds), r.res);
-				} else
-					newPreds.add("!" + r.pred);
+			for (final Rule r : this.name2rules.get(name)) {
+				if (!r.res.equals("R"))
+					ret += find(combine(preds, newPreds, r.pred), r.res);
+				newPreds.add("!" + r.pred);
+			}
 			return ret;
 		}
 	}
 
-	private long compute(final List<String> preds) {
+	private long count(final List<String> preds) {
 		long ret = 1;
-		// System.out.println(preds);
 		for (final String s : new String[] { "x", "m", "a", "s" }) {
 			int min = MIN, max = MAX;
 			for (final String pred : preds)
@@ -72,20 +70,18 @@ public class Part2 extends Part1 {
 				ret = 0;
 			else
 				ret *= max - min + 1l;
-			// System.out.println(s + ": " + min + "-" + max);
 		}
-		System.out.println(" > " + ret);
 		return ret;
 	}
 	
-	private List<String> combine(final List<String> preds, final List<String> newPreds) {
+	private List<String> combine(final List<String> preds, final List<String> newPreds, String pred) {
 		final List<String> ret = new LinkedList<>(preds);
 		ret.addAll(newPreds);
+		ret.add(pred);
 		return ret;
 	}
 
 	private void addRules(final Map<String, List<Rule>> name2rules, final String line) {
-		// px{a<2006:qkq,m>2090:A,rfg}
 		final String[] ss = line.replace("{", ";").replace("}", "").split(";");
 		final String name = ss[0];
 		name2rules.put(name, new LinkedList<>());
@@ -100,7 +96,6 @@ public class Part2 extends Part1 {
 				r.res = pa[1];
 			}
 		}
-		
 	}
 
 	static class Rule {
@@ -115,7 +110,7 @@ public class Part2 extends Part1 {
 
 	@Override
 	public void main() {
-		// assertEquals(0, new Part2().compute("input.txt").res);
+		assertEquals(0, new Part2().compute("input.txt").res);
 	}
 
 }
