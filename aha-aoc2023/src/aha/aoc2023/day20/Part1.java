@@ -18,7 +18,7 @@ public class Part1 extends Part {
 	public Part1() {
 	}
 
-	private boolean pp = false;
+	boolean pp = false;
 
 	Part setPP() {
 		this.pp = true;
