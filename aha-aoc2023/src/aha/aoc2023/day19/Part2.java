@@ -11,46 +11,46 @@ import aha.aoc2023.Part;
 import aha.aoc2023.Utils;
 
 public class Part2 extends Part1 {
-
+	
 	private boolean pp = false;
-
+	
 	private Part withPP() {
 		this.pp = true;
 		return this;
 	}
-	
-	private Map<String, List<Rule>> name2rules;
-	
-	private final String[] xmas = new String[] { "x", "m", "a", "s" };
 
+	private Map<String, List<Rule>> name2rules;
+
+	private final String[] xmas = new String[] { "x", "m", "a", "s" };
+	
 	@Override
 	public Part compute(final String file) {
 		this.name2rules = new HashMap<>();
-
+		
 		Utils.streamLines(dir + file)
 		.filter(line -> !line.isEmpty() && !line.startsWith("{"))
 		.forEach(line -> addRules(this.name2rules, line));
-
+		
 		final List<List<String>> listOfPreds = new LinkedList<>();
 		find(listOfPreds, new LinkedList<>(), "in");
-
+		
 		final List<Map<String, int[]>> listOfRanges = new LinkedList<>();
 		for (final List<String> preds : listOfPreds)
 			addRanges(listOfRanges, preds);
-		
+
 		for (final Map<String, int[]> ranges : listOfRanges) {
 			final long v = volume(ranges);
 			if (this.pp)
 				System.out.println(toString(ranges) + " > " + v);
 			this.res += v;
 		}
-		
+
 		return this;
 	}
-	
+
 	static final int MIN = 1;
 	static final int MAX = 4000;
-	
+
 	private void find(final List<List<String>> ret, final List<String> preds, final String name) {
 		if (name.equals("A"))
 			ret.add(preds);
@@ -63,14 +63,14 @@ public class Part2 extends Part1 {
 			}
 		}
 	}
-
+	
 	private List<String> combine(final List<String> preds, final List<String> addPreds, final String addPred) {
 		final List<String> ret = new LinkedList<>(preds);
 		ret.addAll(addPreds);
 		ret.add(addPred);
 		return ret;
 	}
-
+	
 	private void addRanges(final List<Map<String, int[]>> listOfRanges, final List<String> preds) {
 		final Map<String, int[]> m = new HashMap<>();
 		for (final String s : this.xmas) {
@@ -99,23 +99,22 @@ public class Part2 extends Part1 {
 		}
 		listOfRanges.add(m);
 	}
-	
+
 	private long volume(final Map<String, int[]> ranges) {
 		long ret = 1;
 		for (final String s : this.xmas)
 			ret *= ranges.get(s)[1] - ranges.get(s)[0] + 1l;
 		return ret;
 	}
-
+	
 	private String toString(final Map<String, int[]> m) {
 		String out = "";
 		for (final String s : this.xmas)
 			out += ", " + s + "=[" + m.get(s)[0] + "-" + m.get(s)[1] + "]";
 		return out.substring(2);
 	}
-	
+
 	private void addRules(final Map<String, List<Rule>> name2rules, final String line) {
-		// px{a<2006:qkq,m>2090:A,rfg}
 		final String[] ss = line.replace("{", ";").replace("}", "").split(";");
 		final String name = ss[0];
 		name2rules.put(name, new LinkedList<>());
@@ -130,23 +129,22 @@ public class Part2 extends Part1 {
 				r.act = pa[1];
 			}
 		}
-		
 	}
-
+	
 	static class Rule {
 		String pred;
 		String act;
 	}
-
+	
 	@Override
 	public void aTest() {
 		// assertEquals(167409079868000l, new Part2().withPP().compute("test.txt").res);
 		assertEquals(167409079868000l, new Part2().compute("test.txt").res);
 	}
-
+	
 	@Override
 	public void main() {
 		assertEquals(132380153677887l, new Part2().compute("input.txt").res);
 	}
-
+	
 }
