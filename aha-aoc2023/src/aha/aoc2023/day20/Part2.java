@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -15,10 +16,26 @@ import aha.aoc2023.Utils;
 
 public class Part2 extends Part1 {
 	
+	private boolean manual = false;
+	
+	private Part2 setManual() {
+		this.manual = true;
+		return this;
+	}
+	
 	@Override
 	public Part compute(final String file) {
 		parseNodes(file);
 		
+		if (manual)
+			doManual();
+		else
+			doBetter();
+		
+		return this;
+	}
+	
+	private void doManual() {
 		// look at state
 		// -> find ff that flip together in different periods
 		// -> order by periods
@@ -106,15 +123,27 @@ public class Part2 extends Part1 {
 			}
 			System.out.println(s);
 		}
-		
+
+		stateOut(names);
+
 		while (true) {
-			stateOut(names);
 			pushTheButton();
+			if (pushButtonCnt > 3900 && pushButtonCnt < 4010)
+				stateOut(names);
 			if (limitReached())
 				break;
 		}
 		
-		return this;
+		// out of the output search the steps where each number gets back to
+		// ------------
+		// 3917
+		// 3943
+		// 3947
+		// 4001
+		// lowest number is lcm
+		
+		this.res = Utils.lcm(Utils.lcm(3917, 3943), Utils.lcm(3947, 4001));
+		
 	}
 	
 	private void stateOut(final List<String> names) {
@@ -128,6 +157,71 @@ public class Part2 extends Part1 {
 		}
 		System.out.println(s + " " + this.pushButtonCnt);
 	}
+	
+	private void doBetter() {
+		
+		List<List<String>> groups = new LinkedList<>();
+		
+		// search all groups connected by one InvN
+		
+		for (final Node n : this.m.values())
+		 	if (n instanceof InvN) {
+		 		List<String> group = new LinkedList<>();
+		 		group.addAll(n.output);
+		 		group.addAll(((InvN) n).inputs.keySet());
+		 		Iterator<String> gi = group.iterator();
+		 		while (gi.hasNext())
+			 		if (!(m.get(gi.next()) instanceof FFN))
+			 			gi.remove();
+		 		groups.add(group);
+		 	}
+
+		// we know that we have some which are the biggest and of equal size
+		
+		int maxL = groups.stream().mapToInt(list -> list.size()).max().orElse(0);
+		
+		Iterator<List<String>> iter = groups.iterator();
+		while (iter.hasNext())
+			if (iter.next().size() < maxL)
+				iter.remove();
+
+		// for each group init the cycle number
+		
+		long[] cycles = new long[groups.size()];
+		
+		while (true) {
+			pushTheButton();
+
+			// for all groups check if we reached a cycle
+			int g = 0;
+			for (List<String> group : groups) {
+				if (cycles[g] == 0) { // only first cycle
+					boolean off = true;
+					for (String name : group)
+						off &= !((FFN) m.get(name)).ff;
+					if (off)
+						cycles[g] = pushButtonCnt;
+				}
+				g++;
+			}
+			
+			// check if all cycles are found
+			{
+				int m = 1;
+				for (long c : cycles)
+					m *= c;
+				if (m != 0)
+					break;
+			}
+		}
+
+		// res = lcm of all cycles
+
+		this.res = cycles[0];
+		for (int cn = 1; cn < cycles.length; cn++)
+			this.res = Utils.lcm(this.res, cycles[cn]);
+
+	}
 
 	@Override
 	public void aTest() {
@@ -136,16 +230,8 @@ public class Part2 extends Part1 {
 
 	@Override
 	public void main() {
-		assertEquals(0, new Part2().setLimit(10000).compute("input.txt").res);
-		// out of the output search the steps where each number gets back to
-		// ------------
-		// 3917
-		// 3943
-		// 3947
-		// 4001
-		// lowest number is lcm
-		System.out.println(Utils.lcm(Utils.lcm(3917, 3943), Utils.lcm(3947, 4001)));
-		// 243902373381257
+		// assertEquals(243902373381257l, new Part2().setManual().setLimit(4100).compute("input.txt").res);
+		assertEquals(243902373381257l, new Part2().setLimit(-1).compute("input.txt").res);
 	}
 
 }
